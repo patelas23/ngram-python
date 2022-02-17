@@ -21,6 +21,8 @@ space_joiner = ' '.join
 
 # Regex to detect end of sentences
 punctuator = re.compile(r"!\.\?")
+start_tagger = re.compile(r"<start>")
+end_tagger = re.compile(r"<end>")
 
 current_corpus = ''
 
@@ -42,6 +44,7 @@ with open(argv[2]) as f:
     current_corpus = f.read().lower()
 
 # Delimit file by punctuation
+punctuation_match = punctuator.search(current_corpus)
 
 # Add <start> and <end> tags
-
+current_corpus = punctuator.sub("<start><end>", current_corpus)
