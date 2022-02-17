@@ -22,6 +22,7 @@ from random import random
 
 # Regex to detect end of sentences
 punctuator = re.compile(r"!\.\?")
+despacer = re.compiler(r"\S")
 start_tagger = re.compile(r"<start>")
 end_tagger = re.compile(r"<end>")
 
@@ -29,6 +30,8 @@ end_tagger = re.compile(r"<end>")
 space_joiner = ' '.join
 
 current_corpus = ''
+corpus_arr = []
+history_dict = dict
 
 # minimum of one start tag
 ngram_start_tags = ""
@@ -59,3 +62,16 @@ punctuation_match = punctuator.search(current_corpus)
 # Add <start> and <end> tags
 current_corpus = ngram_start_tags + current_corpus
 current_corpus = punctuator.sub(ngram_start_tags + "<end>", current_corpus)
+
+# Split corpus along whitespace -> array of words
+
+# Create dictionary of all uniquely identified words
+
+# Create scrolling n-sequence window
+
+# Create dictionary for n-sequence history
+
+# Create n-gram dictionary using history and current word
+
+# Generate n-gram sentences from <start> to <end>
+
