@@ -5,9 +5,11 @@
 # Author: Ankur Patel
 # 
 # Algorithm:
-#   IN: 
-#   OUT:
-#   Description:
+#   IN: n - number of words in n-gram sequence
+#       m - number of sentences to generate
+#       filename(s)
+#   OUT: Sentences generated using n-gram model
+#   Description: 
 # 
 
 
@@ -16,21 +18,29 @@ import re
 from sys import argv
 from random import random
 
-# Insert spaces between stored words
-space_joiner = ' '.join
+
 
 # Regex to detect end of sentences
 punctuator = re.compile(r"!\.\?")
 start_tagger = re.compile(r"<start>")
 end_tagger = re.compile(r"<end>")
 
+# Insert spaces between stored words
+space_joiner = ' '.join
+
 current_corpus = ''
 
-# number of words in n-gram sequences
-n = argv[0]
-# number of sentences to be generated
-m = argv[1]
+# minimum of one start tag
+ngram_start_tags = ""
 
+n = argv[0]
+
+# Create n-1 start tags
+for _ in range(n-1):
+    ngram_start_tags = ngram_start_tags + "<start>"
+
+
+m = argv[1]
 num_files = argv.__len__
 # # Iterate through each available filename
 # for arg in range(argv.__len__ - 2):
@@ -47,4 +57,6 @@ with open(argv[2]) as f:
 punctuation_match = punctuator.search(current_corpus)
 
 # Add <start> and <end> tags
+current_corpus = "<start>" + current_corpus
 current_corpus = punctuator.sub("<start><end>", current_corpus)
+# TODO: create n-1 start tags
