@@ -57,6 +57,5 @@ with open(argv[2]) as f:
 punctuation_match = punctuator.search(current_corpus)
 
 # Add <start> and <end> tags
-current_corpus = "<start>" + current_corpus
-current_corpus = punctuator.sub("<start><end>", current_corpus)
-# TODO: create n-1 start tags
+current_corpus = ngram_start_tags + current_corpus
+current_corpus = punctuator.sub(ngram_start_tags + "<end>", current_corpus)
