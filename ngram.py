@@ -18,8 +18,6 @@ import re
 from sys import argv
 from random import random
 
-
-
 # Regex to detect end of sentences
 punctuator = re.compile(r"!\.\?")
 despacer = re.compiler(r"\S")
@@ -33,7 +31,8 @@ current_corpus = ''
 corpus_arr = []
 history_dict = dict
 
-# minimum of one start tag
+# TODO:  Tuple containing current n-gram window
+
 ngram_start_tags = ""
 
 n = argv[0]
