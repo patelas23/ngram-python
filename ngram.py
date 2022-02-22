@@ -18,10 +18,12 @@ current_corpus = ['I', 'am', 'here']
 
 
 # Generic imports
+from json.tool import main
 import re
 from sys import argv
 from random import random
 from collections import deque
+from unicodedata import name
 
 
 # Regex to detect end of sentences
@@ -33,10 +35,14 @@ end_tagger = re.compile(r"<end>")
 # Insert spaces between stored words
 space_joiner = ' '.join
 
+# input corpus as a single, long string
 current_corpus = ''
+# array of words parsed from above string
 corpus_arr = []
-history_dict = dict()
+# contains all parsed ngrams
 ngram_dict = dict()
+# contains (n-1)grams and their frequencies 
+history_dict = dict()
 
 # minimum of one start tag
 ngram_start_tags = ""
@@ -97,3 +103,8 @@ for word in corpus_arr:
 
 # Generate n-gram sentences from <start> to <end>
 
+
+
+# if name == '__main__':
+    # import sys
+    # n = int(sys.argv[0])
