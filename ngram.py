@@ -17,7 +17,6 @@ from collections import deque
 from random import random
 from sys import argv
 import re
-current_corpus = ['I', 'am', 'here']
 # ##################
 
 # Insert spaces between stored words
@@ -27,40 +26,9 @@ space_joiner = ' '.join
 current_corpus = ''
 # array of words parsed from above string
 corpus_arr = []
-# contains all parsed ngrams
-token_dict = dict()
-# contains (n-1)grams and their frequencies
-history_dict = dict()
-# Contains frequency of ngrams
-ngram_dict = dict()
 
 # minimum of one start tag
 ngram_start_tags = ""
-
-n = argv[0]
-
-# N-size window
-ngram_deq = deque()
-
-
-num_files = argv.__len__ - 2
-
-# # Iterate through each available filename
-# for arg in range(argv.__len__ - 2):
-#     current_file = argv[arg + 2]
-
-# # ### Testing with a single filename
-# current_file = open(argv[2], 'r')
-# # Read file as a single, all lowercase string
-# TODO: parse string as usual for starts of sentences
-
-
-
-# Create dictionary for n-sequence history
-
-# Create n-gram dictionary using history and current word
-
-# Generate n-gram sentences from <start> to <end>
 
 # Function to generate ngram model in the form of a 
 #   nested dictionary. 
@@ -87,15 +55,20 @@ def ngram_analyzer(n, corpus_arr):
                     ngram_dict[history] = {next_word, 1}
             else:
                 ngram_dict[history] = {}
-
     return ngram_dict
 
 def sentence_generator():
+    # Begin with start tag, but don't print it
+    # Probability(first_word) = freq(ngram)/freq(first_word)
     pass
+
 
 if __name__ == '__main__':
 
     import sys
+
+    # Variable (n-1) start tags
+    ngram_start_tags = ""
 
     ### Regular expressions
     # Remove punctuation and spaces
@@ -116,7 +89,6 @@ if __name__ == '__main__':
     n = int(sys.argv[0])
     m = int(argv[1])
 
-
     with open(argv[2]) as f:
         current_corpus = f.read()
 
@@ -133,6 +105,8 @@ if __name__ == '__main__':
 
     # Build ngram model
     ngram_model = ngram_analyzer(n, corpus_arr)
+
+    print(ngram_model)
 
     print("Hello! welcome to my ngram script.")
     print(
