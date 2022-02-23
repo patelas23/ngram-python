@@ -1,29 +1,27 @@
 ###### ngram.py ######
-# A python script to parse supplied text, to build 
-#   an n-gram model for sentence generation. 
-# 
+# A python script to parse supplied text, to build
+#   an n-gram model for sentence generation.
+#
 # Author: Ankur Patel
-# 
+#
 # Algorithm:
 #   IN: n - number of words in n-gram sequence
 #       m - number of sentences to generate
 #       filename(s)
 #   OUT: Sentences generated using n-gram model
-#   Description: 
-# 
+#   Description:
+#
 
 # ##################
+from collections import deque
+from random import random
+from sys import argv
+import re
 current_corpus = ['I', 'am', 'here']
 # ##################
 
 
 # Generic imports
-from json.tool import main
-import re
-from sys import argv
-from random import random
-from collections import deque
-from unicodedata import name
 
 
 # Regex to detect end of sentences
@@ -40,9 +38,11 @@ current_corpus = ''
 # array of words parsed from above string
 corpus_arr = []
 # contains all parsed ngrams
-ngram_dict = dict()
-# contains (n-1)grams and their frequencies 
+token_dict = dict()
+# contains (n-1)grams and their frequencies
 history_dict = dict()
+# Contains frequency of ngrams
+ngram_dict = dict()
 
 # minimum of one start tag
 ngram_start_tags = ""
@@ -57,8 +57,9 @@ for _ in range(n-1):
     ngram_start_tags = ngram_start_tags + "<start>"
 
 
-m = argv[1]
-num_files = argv.__len__
+m = int(argv[1])
+num_files = argv.__len__ - 2
+
 # # Iterate through each available filename
 # for arg in range(argv.__len__ - 2):
 #     current_file = argv[arg + 2]
@@ -80,23 +81,41 @@ current_corpus = punctuator.sub(ngram_start_tags + "<end>", current_corpus)
 # Split corpus along whitespace -> array of words
 corpus_arr = current_corpus.split()
 
-# Create dictionary of all uniquely identified words
-
-# Create scrolling n-sequence window
-# For each word in current corpus
+# Create scrolling n-sequence window for each
+#  word in current corpus
 for word in corpus_arr:
+    # Create dictionary of unique words with their counts
+    if word in token_dict:
+        token_dict[word] += 1
+    else:
+        token_dict[word] = 1
+
     ngram_deq.append(word)
     if(ngram_deq.__len__ == n):
-        previous_word = ngram_deq.pop()
-        if previous_word == "<end>":
-            # store current ngram, then clear it
-            pass
-    if word in ngram_dict:
-        ngram_dict[word] += 1
-    else:
-        ngram_dict[word] = 1
+        # Record probability of current word given previous n-1 words
+        next_word = ngram_deq.pop()
+        history = tuple(ngram_deq)
+        # Store frequency of ngram
+        if ngram_deq in history_dict:
+            history_dict[ngram_deq] += 1
+        else:
+            history_dict[ngram_deq] = 1
 
-    
+        # Record occurence of ngram with its following word, 
+        #  creating a new record if the ngram is present
+        # TODO: simplify above algorithm into this one
+        if history in ngram_dict:
+            if next_word in ngram_dict[history]:
+                ngram_dict[history][next_word] += 1
+            else:
+                ngram_dict[history][next_word] = 1
+        else:
+            ngram_dict[history] = {next_word, 0}
+
+        if next_word == "<end>":
+            ngram_deq = deque()
+
+
 # Create dictionary for n-sequence history
 
 # Create n-gram dictionary using history and current word
@@ -104,7 +123,9 @@ for word in corpus_arr:
 # Generate n-gram sentences from <start> to <end>
 
 
-
 # if name == '__main__':
     # import sys
     # n = int(sys.argv[0])
+    print("Hello! welcome to my ngram script.")
+    print(
+        "Enter n: number of words in sequence \n m: number of sentences to be generated \n [files] names of files to input")
