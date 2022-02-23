@@ -123,12 +123,18 @@ if __name__ == '__main__':
     # Delimit file by punctuation
     punctuation_match = punctuator.search(current_corpus)
 
-    # Add <start> and <end> tags
+    # Add n*<start> tags to beginning of corpus
     current_corpus = ngram_start_tags + current_corpus
+    # Add <end> n*<start> tags at the end of each sentence.
     current_corpus = punctuator.sub(ngram_start_tags + "<end>", current_corpus)
 
     # Split corpus along whitespace -> array of words
     corpus_arr = current_corpus.split()
+
+    # Build ngram model
+    ngram_model = ngram_analyzer(n, corpus_arr)
+
     print("Hello! welcome to my ngram script.")
     print(
         "Enter n: number of words in sequence \n m: number of sentences to be generated \n [files] names of files to input")
+    print("")
