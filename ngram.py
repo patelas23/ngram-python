@@ -50,6 +50,7 @@ def ngram_analyzer(n, corpus_arr):
 
     for word in corpus_arr:
         ngram_list.append(word)
+        
         word_count += 1
         if(len(ngram_list) == n):
             next_word = ngram_list.pop()
@@ -59,27 +60,27 @@ def ngram_analyzer(n, corpus_arr):
                     ngram_dict[history][next_word] += 1
                 else:
                     ngram_dict[history] = {next_word: 1}
-                if next_word == "<end>":
-                    ngram_list = list() # Clear list at end of sentence
             else:
+                if(history == "<start>"):
+                    print("here!")
                 ngram_dict[history] = {}
             # Shift window over by one word
-            ngram_list.pop(0)
             ngram_list.append(next_word)
+            ngram_list.pop(0)
 
     return ngram_dict
 
 # Helper function for determining total probability of next word occuring
-def probability_sum(value_dict:dict, key:tuple):
+def probability_sum(value_dict:dict):
     sum = 0
-    for i in value_dict[key].values():
-        sum += i
+    # dict_counts = tuple(value_dict[key].values())
+    dict_counts = list(value_dict.values())
+    for i in dict_counts:
+        sum += 1
     return sum
     
-
-# 
+    
 def sentence_generator(n:int, m:int, ngram_model:dict ):
-    sentence_begun = False
     # Start tag tuple
     start_tags = []
     sentence_list = []
@@ -88,7 +89,6 @@ def sentence_generator(n:int, m:int, ngram_model:dict ):
     # Produce m sentences
     for _ in range(m):
         # Generate a random float (0-1)
-        rand = random()
         count = 0
         current_history = start_tags
         current_sentence = []
@@ -98,20 +98,35 @@ def sentence_generator(n:int, m:int, ngram_model:dict ):
 
         while(sentence_ended == False):
             # Perform weighted selection of next word, given hsitory
-            prob_count = probability_sum(ngram_model, current_history)
-            for next_word in ngram_model[current_history]:
-                word_prob = ngram_model[current_history][next_word]/prob_count
+            history_tuple = tuple(current_history)
+            # Total probability of this history
+            prob_count = probability_sum(ngram_model[history_tuple])
+            # Gather list of possible next words
+            current_list = list(ngram_model[history_tuple].keys())
+
+            rand = random()
+
+            for next_word in current_list:
+            # for _ in range(prob_count):
+                word_prob = ngram_model[history_tuple][next_word]/prob_count
                 count += word_prob
-                if(rand >= count):
+                if(count >= rand):
                     # Add current word to sentence, clear variables
                     current_sentence.append(next_word)
                     count = 0
+                    rand = random()
                     current_history.pop(0)
                     current_history.append(next_word)
-                if(next_word == "<end>"):
-                    sentence_list.append(spacer.join(current_sentence))
-                    current_sentence = ""
-                    sentence_ended = True
+                    print(current_history)
+                    if(next_word == "<end>"):
+                        sentence_list.append(spacer.join(current_sentence))
+                        current_sentence = ""
+                        current_history = start_tags
+                        sentence_ended = True
+                        print("End it!")
+                    break
+                else:
+                    continue
     return sentence_list
 
 
@@ -130,8 +145,7 @@ if __name__ == '__main__':
     start_tagger = re.compile(r"<start>")
     end_tagger = re.compile(r"<end>")
 
-    # input corpus variables
-    current_corpus = ''
+    current_corpus = ""
 
     # Command line arguments
     n = int(sys.argv[1])
@@ -145,18 +159,22 @@ if __name__ == '__main__':
 
     # Create n-1 start tags
     for _ in range(n-1):
-        ngram_start_tags = ngram_start_tags + "<start>"
+        ngram_start_tags = ngram_start_tags + "<start> "
 
     # Delimit file by punctuation
-    punctuation_match = punctuator.search(current_corpus)
+    # punctuation_match = punctuator.search(current_corpus)
 
     # Add n*<start> tags to beginning of corpus
     current_corpus = ngram_start_tags + current_corpus
     # Add <end> n*<start> tags at the end of each sentence.
-    current_corpus = punctuator.sub(ngram_start_tags + "<end>", current_corpus)
-
+    ngram_start_tags = " <end> " + ngram_start_tags 
+    current_corpus = re.sub(r"[!.?]", ngram_start_tags, current_corpus)
     # Split corpus along whitespace -> array of words
     corpus_arr = current_corpus.split()
+    
+    # Remove start tags from end of corpus
+    for _ in range(n-1):
+        corpus_arr.pop()
 
     # Build ngram model
     ngram_model = ngram_analyzer(n, corpus_arr)
