@@ -13,7 +13,7 @@
 #
 
 # ##################
-from collections import deque
+from collections import Counter
 from random import random
 from sys import argv
 import re
@@ -45,8 +45,12 @@ def ngram_analyzer(n, corpus_arr):
     # Dictionary counting raw frequency of each word
     token_dict = dict()
 
+    # Count of all words for statistical analysis
+    word_count = 0
+
     for word in corpus_arr:
         ngram_list.append(word)
+        word_count += 1
         if(len(ngram_list) == n):
             next_word = ngram_list.pop()
             history = tuple(ngram_list)
@@ -62,39 +66,50 @@ def ngram_analyzer(n, corpus_arr):
             # Shift window over by one word
             ngram_list.pop(0)
             ngram_list.append(next_word)
+
     return ngram_dict
 
+# Helper function for determining total probability of next word occuring
+def probability_sum(value_dict:dict, key:tuple):
+    sum = 0
+    for i in value_dict[key].values():
+        sum += i
+    return sum
+    
+
 # 
-def sentence_generator(m:int, ngram_model:dict ):
+def sentence_generator(n:int, m:int, ngram_model:dict ):
     sentence_begun = False
+    # Start tag tuple
+    start_tags = []
+    for _ in range(n-1):
+        start_tags.append("<start>")
     # Produce m sentences
     for _ in range(m):
         # Generate a random float (0-1)
         rand = random()
         count = 0
-        current_history = ngram_start_tags
+        current_history = start_tags
+        current_sentence = ""
+        current_word = ""
         sentence_ended = False
 
-        for next_word in ngram_model[current_history]:
-            if(next_word == "<end>"):
-                sentence_ended = True
-            pass # Randomly select start word
-        # For ngram in history
-        # ## For word in ngram
-        # #### Generate frequencies
-        for history, word_list in ngram_model.items():
-            while(sentence_begun == False):
-                pass
+        while(sentence_ended == False):
+            prob_count = probability_sum(ngram_model, current_history)
 
-            for next_word in word_list:
-                pass
-            # If start tag is found, begin generating sentence
-    # Probability(first_word) = freq(ngram)/freq(first_word)
-    count = 0
-    # if count > probability
-    # ## print word
-    # else
-    # ## 
+            for next_word in ngram_model[current_history]:
+                word_prob = ngram_model[current_history][next_word]/prob_count
+
+                count += word_prob
+
+                if(rand >= count):
+                    print(next_word)
+
+                if(next_word == "<end>"):
+                    sentence_ended = True
+            # Scroll history by one
+            current_history.pop(0)
+
     pass
 
 
@@ -147,4 +162,4 @@ if __name__ == '__main__':
     print("Hello! welcome to my ngram script.")
 
     # Generate m random sentences based on model
-    sentence_generator(m, ngram_model)
+    sentence_generator(n, m, ngram_model)
