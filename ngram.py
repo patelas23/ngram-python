@@ -82,6 +82,7 @@ def sentence_generator(n:int, m:int, ngram_model:dict ):
     sentence_begun = False
     # Start tag tuple
     start_tags = []
+    sentence_list = []
     for _ in range(n-1):
         start_tags.append("<start>")
     # Produce m sentences
@@ -90,27 +91,28 @@ def sentence_generator(n:int, m:int, ngram_model:dict ):
         rand = random()
         count = 0
         current_history = start_tags
-        current_sentence = ""
+        current_sentence = []
+        spacer = " "
         current_word = ""
         sentence_ended = False
 
         while(sentence_ended == False):
+            # Perform weighted selection of next word, given hsitory
             prob_count = probability_sum(ngram_model, current_history)
-
             for next_word in ngram_model[current_history]:
                 word_prob = ngram_model[current_history][next_word]/prob_count
-
                 count += word_prob
-
                 if(rand >= count):
-                    print(next_word)
-
+                    # Add current word to sentence, clear variables
+                    current_sentence.append(next_word)
+                    count = 0
+                    current_history.pop(0)
+                    current_history.append(next_word)
                 if(next_word == "<end>"):
+                    sentence_list.append(spacer.join(current_sentence))
+                    current_sentence = ""
                     sentence_ended = True
-            # Scroll history by one
-            current_history.pop(0)
-
-    pass
+    return sentence_list
 
 
 if __name__ == '__main__':
@@ -162,4 +164,6 @@ if __name__ == '__main__':
     print("Hello! welcome to my ngram script.")
 
     # Generate m random sentences based on model
-    sentence_generator(n, m, ngram_model)
+    print(sentence_generator(n, m, ngram_model))
+
+    
