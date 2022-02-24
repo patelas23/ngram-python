@@ -14,9 +14,11 @@
 
 # ##################
 from collections import Counter
-from random import random
+from doctest import FAIL_FAST
+from random import Random, random
 from sys import argv
 import re
+from tracemalloc import start
 # ##################
 
 # Insert spaces between stored words
@@ -71,13 +73,43 @@ def ngram_analyzer(n, corpus_arr):
     return ngram_dict
 
 # Helper function for determining total probability of next word occuring
-def probability_sum(value_dict:dict):
+def probability_sum(value_list:list):
     sum = 0
     # dict_counts = tuple(value_dict[key].values())
-    dict_counts = list(value_dict.values())
-    for i in dict_counts:
-        sum += 1
+    for i in value_list:
+        sum += i
     return sum
+
+def generate_sentences(n:int, m:int, ngram_model:dict):
+    # Flag for end of sentence
+    sentence_ended = False
+    start_tag_tuple = tuple()
+    # Stores working sub-dictionary
+    current_dict = dict()
+    # Crate n-1 start tags
+    for _ in range(n-1):
+        start_tag_tuple = start_tag_tuple + "<start>"
+    # Create m sentences
+    for _ in range(m):
+        # Store list of words for each sentence
+        current_sentence = list()
+        history_tuple = start_tag_tuple
+        while(sentence_ended == False):
+            current_dict = ngram_model[history_tuple]
+            current_prediction_list = list(current_dict.keys())
+            probability_list = list(current_dict.values())
+            total_probability = probability_sum(probability_list)
+            count = 0
+            rand = Random()
+            word_index = 0
+
+            for _ in range(len(probability_list)):
+                count += probability_list[word_index]/total_probability
+                if(count >= rand):
+                    current_sentence.append(current_prediction_list[word_index])
+
+
+
     
     
 def sentence_generator(n:int, m:int, ngram_model:dict ):
