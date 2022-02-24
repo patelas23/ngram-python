@@ -55,6 +55,8 @@ def ngram_analyzer(n, corpus_arr):
                     ngram_dict[history][next_word] += 1
                 else:
                     ngram_dict[history] = {next_word: 1}
+                if next_word == "<end>":
+                    ngram_list = list() # Clear list at end of sentence
             else:
                 ngram_dict[history] = {}
             # Shift window over by one word
@@ -63,15 +65,30 @@ def ngram_analyzer(n, corpus_arr):
     return ngram_dict
 
 # 
-def sentence_generator(m, ngram_model):
+def sentence_generator(m:int, ngram_model:dict ):
+    sentence_begun = False
     # Produce m sentences
     for _ in range(m):
         # Generate a random float (0-1)
         rand = random()
         count = 0
+        current_history = ngram_start_tags
+        sentence_ended = False
+
+        for next_word in ngram_model[current_history]:
+            if(next_word == "<end>"):
+                sentence_ended = True
+            pass # Randomly select start word
         # For ngram in history
         # ## For word in ngram
         # #### Generate frequencies
+        for history, word_list in ngram_model.items():
+            while(sentence_begun == False):
+                pass
+
+            for next_word in word_list:
+                pass
+            # If start tag is found, begin generating sentence
     # Probability(first_word) = freq(ngram)/freq(first_word)
     count = 0
     # if count > probability
@@ -128,6 +145,6 @@ if __name__ == '__main__':
     ngram_model = ngram_analyzer(n, corpus_arr)
 
     print("Hello! welcome to my ngram script.")
-    print(
-        "Enter n: number of words in sequence \n m: number of sentences to be generated \n [files] names of files to input")
-    print("")
+
+    # Generate m random sentences based on model
+    sentence_generator(m, ngram_model)
