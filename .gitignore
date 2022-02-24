@@ -1,0 +1,2 @@
+# ignore corpus files used for testing.
+*.txt

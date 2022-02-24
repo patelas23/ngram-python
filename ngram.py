@@ -38,28 +38,46 @@ ngram_start_tags = ""
 # OUT: nested dictionary containing [ngrams][next_word: count]
 def ngram_analyzer(n, corpus_arr):
     # window for current ngram
-    ngram_list = deque()
+    ngram_list = list()
     # dictionary mapping history: {[list of words]: count}
-    ngram_dict = dict()
+    ngram_dict = {}
+    
     # Dictionary counting raw frequency of each word
     token_dict = dict()
+
     for word in corpus_arr:
         ngram_list.append(word)
-        if(ngram_list.__len__ == n):
+        if(len(ngram_list) == n):
             next_word = ngram_list.pop()
             history = tuple(ngram_list)
             if history in ngram_dict:
                 if next_word in ngram_dict[history]:
-                    ngram_dict[history][next_word] += 1
+                    pass
+                    # ngram_dict[history][next_word] += 1
                 else:
-                    ngram_dict[history] = {next_word, 1}
+                    pass
+                    # ngram_dict[history] = {next_word, 1}
             else:
                 ngram_dict[history] = {}
+                print(ngram_dict.keys())
     return ngram_dict
 
-def sentence_generator():
-    # Begin with start tag, but don't print it
+# 
+def sentence_generator(m, ngram_model):
+    # Produce m sentences
+    for _ in range(m):
+        # Generate a random float (0-1)
+        rand = random()
+        count = 0
+        # For ngram in history
+        # ## For word in ngram
+        # #### Generate frequencies
     # Probability(first_word) = freq(ngram)/freq(first_word)
+    count = 0
+    # if count > probability
+    # ## print word
+    # else
+    # ## 
     pass
 
 
@@ -78,19 +96,22 @@ if __name__ == '__main__':
     start_tagger = re.compile(r"<start>")
     end_tagger = re.compile(r"<end>")
 
-    # Create n-1 start tags
-    for _ in range(n-1):
-        ngram_start_tags = ngram_start_tags + "<start>"
-
     # input corpus variables
     current_corpus = ''
 
     # Command line arguments
-    n = int(sys.argv[0])
-    m = int(argv[1])
+    n = int(sys.argv[1])
+    m = int(argv[2])
 
-    with open(argv[2]) as f:
+    with open(argv[3]) as f:
         current_corpus = f.read()
+
+    # while num_files > 0:
+    #     pass
+
+    # Create n-1 start tags
+    for _ in range(n-1):
+        ngram_start_tags = ngram_start_tags + "<start>"
 
     # Delimit file by punctuation
     punctuation_match = punctuator.search(current_corpus)
@@ -106,7 +127,7 @@ if __name__ == '__main__':
     # Build ngram model
     ngram_model = ngram_analyzer(n, corpus_arr)
 
-    print(ngram_model)
+    print(ngram_model.keys())
 
     print("Hello! welcome to my ngram script.")
     print(
