@@ -52,14 +52,14 @@ def ngram_analyzer(n, corpus_arr):
             history = tuple(ngram_list)
             if history in ngram_dict:
                 if next_word in ngram_dict[history]:
-                    pass
-                    # ngram_dict[history][next_word] += 1
+                    ngram_dict[history][next_word] += 1
                 else:
-                    pass
-                    # ngram_dict[history] = {next_word, 1}
+                    ngram_dict[history] = {next_word: 1}
             else:
                 ngram_dict[history] = {}
-                print(ngram_dict.keys())
+            # Shift window over by one word
+            ngram_list.pop(0)
+            ngram_list.append(next_word)
     return ngram_dict
 
 # 
@@ -126,8 +126,6 @@ if __name__ == '__main__':
 
     # Build ngram model
     ngram_model = ngram_analyzer(n, corpus_arr)
-
-    print(ngram_model.keys())
 
     print("Hello! welcome to my ngram script.")
     print(
