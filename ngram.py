@@ -43,6 +43,11 @@ def ngram_analyzer(n, corpus_arr):
     ngram_list = list()
     # dictionary mapping history: {[list of words]: count}
     ngram_dict = {}
+
+    start_tags = []
+    for _ in range(n):
+        start_tags.append("<start>")
+    start_tags = tuple(start_tags)
     
     # Dictionary counting raw frequency of each word
     token_dict = dict()
@@ -56,6 +61,7 @@ def ngram_analyzer(n, corpus_arr):
         word_count += 1
         if(len(ngram_list) == n):
             next_word = ngram_list.pop()
+            print(ngram_list)
             history = tuple(ngram_list)
             if history in ngram_dict:
                 if next_word in ngram_dict[history]:
@@ -63,8 +69,6 @@ def ngram_analyzer(n, corpus_arr):
                 else:
                     ngram_dict[history] = {next_word: 1}
             else:
-                if(history == "<start>"):
-                    print("here!")
                 ngram_dict[history] = {}
             # Shift window over by one word
             ngram_list.append(next_word)
@@ -77,39 +81,52 @@ def probability_sum(value_list:list):
     sum = 0
     # dict_counts = tuple(value_dict[key].values())
     for i in value_list:
-        sum += i
+        sum += value_list[i]
     return sum
 
-def generate_sentences(n:int, m:int, ngram_model:dict):
-    # Flag for end of sentence
-    sentence_ended = False
-    start_tag_tuple = tuple()
+def generate_sentences(n:int, m:int, ngram_model):
+    
+    start_tag_tuple = []
     # Stores working sub-dictionary
     current_dict = dict()
-    # Crate n-1 start tags
+    # Create n-1 start tags
+    # TODO: simplify
     for _ in range(n-1):
-        start_tag_tuple = start_tag_tuple + "<start>"
+        start_tag_tuple.append("<start>")
+    start_tag_tuple = tuple(start_tag_tuple)
     # Create m sentences
     for _ in range(m):
+        # Flag for end of sentence
+        sentence_ended = False
         # Store list of words for each sentence
         current_sentence = list()
+        current_word = ""
         history_tuple = start_tag_tuple
+        # Scroll history until end of sentence
         while(sentence_ended == False):
             current_dict = ngram_model[history_tuple]
             current_prediction_list = list(current_dict.keys())
             probability_list = list(current_dict.values())
+            print("prediction: " + current_prediction_list)
             total_probability = probability_sum(probability_list)
             count = 0
             rand = Random()
             word_index = 0
 
+            # In-class algorithm for weighted selection from list
+            # Modified to iterate over each key:value pair, associating the probability 
+            #   during exeuction.
             for _ in range(len(probability_list)):
                 count += probability_list[word_index]/total_probability
                 if(count >= rand):
-                    current_sentence.append(current_prediction_list[word_index])
-
-
-
+                    current_word = current_prediction_list[word_index]
+                    break
+                else:
+                    word_index += 1
+            current_sentence.append(current_word)
+            # If the end of the sentence is reached, begin next sentence
+            if(current_word == "<end>"):
+                sentence_ended = True
     
     
 def sentence_generator(n:int, m:int, ngram_model:dict ):
@@ -214,6 +231,8 @@ if __name__ == '__main__':
     print("Hello! welcome to my ngram script.")
 
     # Generate m random sentences based on model
-    print(sentence_generator(n, m, ngram_model))
+    # print(sentence_generator(n, m, ngram_model))
+    # sentence_generator(n, m, ngram_model)
+    generate_sentences(n, m, ngram_model)
 
     
