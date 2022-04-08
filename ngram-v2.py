@@ -20,7 +20,7 @@
 #  1. Build dictionary keys of each unique word,
 #   a. Maintain count of each word as dictionary value
 #  2. 
-from collections import Counter
+from collections import Counter, defaultdict
 import re
 import sys
 
@@ -28,7 +28,7 @@ from parso import parse
 
 # Dictionary containing ngrams and their counts as key-value pairs
 # Structure: {ngram(list): count}
-ngram_model = dict()
+ngram_model = defaultdict(int)
 
 
 # Return either a dictionary or a dataframe object 
