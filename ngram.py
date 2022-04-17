@@ -1,4 +1,4 @@
-###### ngram.py ######
+# ##### ngram.py #######
 # A python script to parse supplied text, to build
 #   an n-gram model for sentence generation.
 #
@@ -10,7 +10,7 @@
 #       filename(s)
 #   OUT: Sentences generated using n-gram model
 #   Description:
-#
+# ######################
 
 # ##################
 from random import random
@@ -29,9 +29,8 @@ corpus_arr = []
 # minimum of one start tag
 ngram_start_tags = ""
 
-# Function to generate ngram model in the form of a 
-#   nested dictionary. 
-# 
+# Function to generate ngram model in the form of a`
+#   nested dictionary.
 # IN: n - number of words in ngram sequence
 #     corpus_arr - list of words 
 # OUT: nested dictionary containing [ngrams][next_word: count]
