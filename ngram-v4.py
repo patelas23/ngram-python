@@ -44,15 +44,20 @@ def main():
     print("User-selected options: \n")
     print("n - " + n)
 
-
+# Function which inputs corpus as a raw string,
+# applies start and end tags to it, and returns
+# the result as a list of words
 def process_text():
     pass
 
+# Function which updates the current ngram model
+# with information from the supplied word list
 def train_model():
     pass
 
-
-def count_ngrams():
+# function which counts the presence of ngrams
+# in a given sample of text
+def count_ngrams(n):
     pass
 
 
